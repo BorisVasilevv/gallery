@@ -1,12 +1,15 @@
 package com.example.gallery.controller;
 
+import com.example.gallery.dao.ImageDAO;
 import com.example.gallery.exceptions.NotFoundException;
+import com.example.gallery.model.StringImageData;
 import com.example.gallery.model.ImageDataSet;
 import com.example.gallery.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -20,48 +23,49 @@ public class MainController {
     MainService service;
 
     @GetMapping
-    public List<ImageDataSet> AllImages(){
-
+    public List<StringImageData> AllImages(){
         return service.getAllImages();
     }
 
     @GetMapping("{id}")
-    public ImageDataSet oneImage(@PathVariable String id){
+    public StringImageData oneImage(@PathVariable String id){
         return findImageById(id);
     }
 
     @PostMapping
-    public ImageDataSet create(@RequestBody ImageDataSet image){
-        service.generateIdAndAdd(image);
+    public StringImageData create(@RequestBody StringImageData image){
+        //service.generateIdAndAdd(image);
         return image;
     }
 
     @PutMapping("{id}")
-    public ImageDataSet update(@PathVariable String id, @RequestBody ImageDataSet image){
-        ImageDataSet imDS=findImageById(id);
-        imDS.setDate(image.getDate());
-        imDS.setSize(image.getSize());
-        imDS.setFilename(image.getFilename());
-        return imDS;
+    public StringImageData update(@PathVariable String id, @RequestBody StringImageData image){
+        //StringImageData imDS=findImageById(id);
+        //imDS.setDate(image.getDate());
+        //imDS.setSize(image.getSize());
+        //imDS.setFilename(image.getFilename());
+        return image;
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id){
-        ImageDataSet imDS=findImageById(id);
+        ImageDAO dao=new ImageDAO();
+        dao.delete(Integer.parseInt(id));
+        StringImageData imDS=findImageById(id);
         service.getAllImages().remove(imDS);
     }
 
 
 
 
-    private ImageDataSet findImageById(Integer id){
+    private StringImageData findImageById(Integer id){
         return service.getAllImages().stream()
                 .filter(image->image.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);
     }
 
-    private ImageDataSet findImageById(String id){
+    private StringImageData findImageById(String id){
         return findImageById(Integer.parseInt(id));
     }
 }

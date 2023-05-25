@@ -1,30 +1,45 @@
 package com.example.gallery.model;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+
+
+
+import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
-
+@Entity
+@Table(name = "images")
 public class ImageDataSet {
 
+    @Id
+    @Column(name = "id", unique = true,nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
+    @Column(name = "size", unique = false,nullable = false)
+    private Integer size;
 
-    Integer id;
-    Integer size;
-    String filename;
-    Date date;
+    @Column(name = "date_and_time",unique = false,nullable = false )
+    private Date date;
 
+    @Column(name = "image", unique = false, nullable = false)
+    private byte[] image;
 
-    public ImageDataSet(Integer id, Integer size, String filename, Date date) {
-        this.id = id;
-        this.size = size;
-        this.filename=filename;
-        this.date = date;
+    public ImageDataSet() {
     }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public ImageDataSet(Integer size, Date date, byte[] image){
+        this.size=size;
+        this.date=date;
+        this.image=image;
+    }
+
+
     public Integer getId() {
         return id;
     }
@@ -33,51 +48,24 @@ public class ImageDataSet {
         return size;
     }
 
-
-    public Date getDate() {
-        return date;
-    }
-
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public void setSize(Integer size) {
         this.size = size;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
     }
 
     public void setDate(Date date) {
         this.date = date;
     }
 
-    public static byte[] imageToBytes(Image image, String format) {
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        bufferedImage.getGraphics().drawImage(image, 0, 0, null);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(bufferedImage, format, outputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return outputStream.toByteArray();
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
-    public static Image bytesToImage(byte[] data){
-        ByteArrayInputStream bis = new ByteArrayInputStream(data);
-        try {
-            return ImageIO.read(bis);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Date getDate() {
+        return date;
+    }
 
+    public byte[] getImage() {
+        return image;
     }
 }
+

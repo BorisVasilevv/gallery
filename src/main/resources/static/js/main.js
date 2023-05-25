@@ -4,7 +4,7 @@ var imagesApi=Vue.resource('/image{/id}');
 //'<img src=src/main/resources/images/test1.png>'
 
 
-Vue.component('interactive-form',{
+/*Vue.component('interactive-form',{
 
     props: ['images'],
     data: function() {
@@ -30,25 +30,30 @@ Vue.component('interactive-form',{
             )
         }
     }
-})
+})*/
 
 
 Vue.component('image-view' ,{
     props: ['image'],
     computed: {
         miniatureFullPath: function(){
-            return "http://localhost:8080/picture/small/"+this.image.id
+            return "http://localhost:8080/picture/"+this.image.id
         }
     },
     template:
     '<div>'+
-        '{{image.id}}) {{image.filename}}'+
-        '<img :src=miniatureFullPath @click="increase">'+
-        '<input type="button">'+
+        '{{image.id}})'+
+        '<img :src=miniatureFullPath width="200" height="87" @click="increase">'+
+        '<input type="button" value="delete" @click="del">'+
     '</div>',
     methods:{
         increase: function(){
 
+        }
+        del: function(){
+            imagesApi.remove({id: image.id}).then(result=>{
+            if(result.ok)
+            })
         }
     }
 })

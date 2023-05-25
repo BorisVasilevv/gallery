@@ -1,7 +1,9 @@
 package com.example.gallery.controller;
 
 
+import com.example.gallery.dao.ImageDAO;
 import com.example.gallery.exceptions.NotFoundException;
+import com.example.gallery.model.StringImageData;
 import com.example.gallery.model.ImageDataSet;
 import com.example.gallery.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,57 +33,63 @@ public class ImageController {
 
     @GetMapping("{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable String id) {
-        ImageDataSet imageDataSet=findImageById(id);
-        byte[] imageBytes= new byte[0];
+        ImageDAO dao= new ImageDAO();
+        ImageDataSet set= dao.get(Integer.parseInt(id));
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        try( InputStream imageStream = new FileInputStream(new File(uploadPath+ '/'+imageDataSet.getFilename()))){
-            imageBytes = imageStream.readAllBytes();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(set==null){
+           throw new NotFoundException();
         }
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-
+        else {
+            headers.setContentType(MediaType.IMAGE_JPEG);
+            return new ResponseEntity<>(set.getImage(), headers, HttpStatus.OK);
+        }
     }
 
-    @GetMapping("small/{id}")
-    public ResponseEntity<byte[]> getSmallImage(@PathVariable String id) {
-        ImageDataSet imageDataSet=findImageById(id);
 
-        byte[] imageBytes=new byte[0];
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
+    //public ResponseEntity<byte[]> getSmallImage(@PathVariable String id) {
+        //StringImageData imageData =findImageById(id);
 
-        try {
+        //byte[] imageBytes=new byte[0];
+        //HttpHeaders headers = new HttpHeaders();
+        //headers.setContentType(MediaType.IMAGE_PNG);
+
+
+        //try {
+
             // загружаем изображение
-            BufferedImage originalImage = ImageIO.read(new File(uploadPath+ '/'+ imageDataSet.getFilename()));
+
+            //BufferedImage originalImage = ImageIO.read(new File(uploadPath+ '/'+ imageData.getFilename()));
             // создаем миниатюру изображения
-            BufferedImage thumbnailImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g2 = thumbnailImage.createGraphics();
-            g2.drawImage(originalImage, 0, 0, 200, 200, null);
-            g2.dispose();
+            //BufferedImage thumbnailImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+            //Graphics2D g2 = thumbnailImage.createGraphics();
+            //g2.drawImage(originalImage, 0, 0, 200, 200, null);
+            //g2.dispose();
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            //ByteArrayOutputStream baos = new ByteArrayOutputStream();
             //через это реализовывать вместе с бд
-            ImageIO.write(thumbnailImage, "png", baos);
-            imageBytes = baos.toByteArray();
+            // Create a buffered image with transparency
+            //BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            //ImageIO.write(thumbnailImage, "png", baos);
+            //imageBytes = baos.toByteArray();
 
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-    }
+        //} catch (IOException e) {
+          //  e.printStackTrace();
+        //}
+
+        //return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+    //}
 
 
-    private ImageDataSet findImageById(Integer id){
+
+    private StringImageData findImageById(Integer id){
         return service.getAllImages().stream()
                 .filter(image->image.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);
     }
 
-    private ImageDataSet findImageById(String id){
+    private StringImageData findImageById(String id){
         return findImageById(Integer.parseInt(id));
     }
 }
