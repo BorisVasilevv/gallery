@@ -49,10 +49,11 @@ public class MainController {
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id){
-        ImageDAO dao=new ImageDAO();
-        dao.delete(Integer.parseInt(id));
+
         StringImageData imDS=findImageById(id);
         service.getAllImages().remove(imDS);
+        ImageDAO dao=new ImageDAO();
+        dao.delete(Integer.parseInt(id));
     }
 
 
