@@ -15,19 +15,10 @@ import java.util.HashMap;
 @Service
 public class MainService {
 
-    static HashMap<Integer, Image> imageCodeAndImage=new HashMap<>();
 
-
-
-    public ArrayList<StringImageData> getAllImages(){
-        ArrayList<StringImageData> list=new ArrayList<>();
+    public List<ImageDataSet> getAllImages(){
         ImageDAO imageDAO=new ImageDAO();
-        List<ImageDataSet> allImages=imageDAO.getAll();
-        if(allImages==null) return list;
-        for(ImageDataSet set:allImages){
-            list.add(new StringImageData(set.getId(),set.getSize(),set.getDate()));
-        }
-        return list;
+        return imageDAO.getAll();
     }
 
 

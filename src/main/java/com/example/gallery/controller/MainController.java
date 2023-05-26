@@ -23,23 +23,24 @@ public class MainController {
     MainService service;
 
     @GetMapping
-    public List<StringImageData> AllImages(){
+    public List<ImageDataSet> AllImages(){
         return service.getAllImages();
     }
 
     @GetMapping("{id}")
-    public StringImageData oneImage(@PathVariable String id){
-        return findImageById(id);
+    public ImageDataSet oneImage(@PathVariable String id){
+        ImageDAO dao=new ImageDAO();
+        return dao.get(Integer.parseInt(id));
     }
 
     @PostMapping
-    public StringImageData create(@RequestBody StringImageData image){
+    public ImageDataSet create(@RequestBody ImageDataSet image){
         //service.generateIdAndAdd(image);
         return image;
     }
 
     @PutMapping("{id}")
-    public StringImageData update(@PathVariable String id, @RequestBody StringImageData image){
+    public ImageDataSet update(@PathVariable String id, @RequestBody ImageDataSet image){
         //StringImageData imDS=findImageById(id);
         //imDS.setDate(image.getDate());
         //imDS.setSize(image.getSize());
@@ -50,8 +51,8 @@ public class MainController {
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id){
 
-        StringImageData imDS=findImageById(id);
-        service.getAllImages().remove(imDS);
+        //StringImageData imDS=findImageById(id);
+        //service.getAllImages().remove(imDS);
         ImageDAO dao=new ImageDAO();
         dao.delete(Integer.parseInt(id));
     }
@@ -59,14 +60,14 @@ public class MainController {
 
 
 
-    private StringImageData findImageById(Integer id){
+    /*private StringImageData findImageById(Integer id){
         return service.getAllImages().stream()
                 .filter(image->image.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);
-    }
+    }*/
 
-    private StringImageData findImageById(String id){
+    /*private StringImageData findImageById(String id){
         return findImageById(Integer.parseInt(id));
-    }
+    }*/
 }

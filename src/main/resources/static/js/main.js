@@ -1,7 +1,29 @@
 var imagesApi=Vue.resource('/image{/id}');
 var pathToImages="http://localhost:8080/picture/"
 
-Vue.component('image-view' ,{
+
+function bytesToBase64(bytes) {
+  let binary = '';
+  let len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+Vue.component('only-image',{
+    props: ['image'],
+    template:
+        '<img :src="imageSrc" alt="">',
+    computed:{
+        imageSrc: function() {
+            return 'data:image/png;base64,' + bytesToBase64(this.image);
+        }
+    }
+
+})
+
+Vue.component('image-data-row' ,{
     props: ['image','images'],
     computed: {
         miniatureFullPath: function(){
@@ -10,7 +32,7 @@ Vue.component('image-view' ,{
     },
     template:
     '<tr>'+
-        '<td><img :src=miniatureFullPath width="200" height="87" @click="increase"></td>'+
+        '<td><only-image :image="image" key="image.id"/></td>'+
         '<td>{{image.size}}</td>'+
         '<td>{{image.date}}</td>'+
         '<td><input type="button" value="delete" @click="del"/></td>'+
@@ -25,6 +47,14 @@ Vue.component('image-view' ,{
                     this.images.splice(this.images.indexOf(this.image), 1)
                 }
             })
+        },
+        createImageUrl: function(imageBytes) {
+            let blob = new Blob([imageBytes], { type: 'image/png' });
+
+            return URL.createObjectURL(blob);
+        },
+        imageSrc(imageBytes) {
+          return 'data:image/png;base64,' + btoa(new Uint8Array(imageBytes).reduce((data, byte) => data + String.fromCharCode(byte), ''));
         }
     }
 })
@@ -33,7 +63,7 @@ Vue.component('image-list', {
     props: ['images'],
     template:
     '<div>'+
-        '<add-form :im="images"/>'+
+        '<add-form :images="images"/>'+
         '<hr>'+
         '<table class="table">'+
             '<thead>'+
@@ -46,7 +76,7 @@ Vue.component('image-list', {
             '</thead>'+
 
             '<tbody>'+
-                '<image-view v-for="image in images" :key="image.id" :image="image" :images="images"/>'+
+                '<image-data-row v-for="image in images" :key="image.id" :image="image" :images="images"/>'+
             '</tbody>'+
         '</table>'+
     '</div>',
@@ -82,7 +112,8 @@ Vue.component('add-form',{
                 })
 
             )
-        }
+        },
+        uploadFile: function(){}
     }
 })
 

@@ -82,14 +82,14 @@ public class ImageController {
 
 
 
-    private StringImageData findImageById(Integer id){
+    /*private StringImageData findImageById(Integer id){
         return service.getAllImages().stream()
                 .filter(image->image.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);
-    }
+    }*/
 
-    private StringImageData findImageById(String id){
+    /*private StringImageData findImageById(String id){
         return findImageById(Integer.parseInt(id));
-    }
+    }*/
 }
