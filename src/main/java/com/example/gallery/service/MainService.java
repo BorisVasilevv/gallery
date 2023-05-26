@@ -2,15 +2,12 @@ package com.example.gallery.service;
 
 import com.example.gallery.dao.ImageDAO;
 import com.example.gallery.model.ImageDataSet;
-import com.example.gallery.model.StringImageData;
 import org.springframework.stereotype.Service;
 
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 @Service
 public class MainService {

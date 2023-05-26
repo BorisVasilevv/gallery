@@ -1,15 +1,12 @@
 package com.example.gallery.controller;
 
 import com.example.gallery.dao.ImageDAO;
-import com.example.gallery.exceptions.NotFoundException;
-import com.example.gallery.model.StringImageData;
 import com.example.gallery.model.ImageDataSet;
 import com.example.gallery.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController

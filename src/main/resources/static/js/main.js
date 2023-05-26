@@ -2,27 +2,6 @@ var imagesApi=Vue.resource('/image{/id}');
 var pathToImages="http://localhost:8080/picture/"
 
 
-function bytesToBase64(bytes) {
-  let binary = '';
-  let len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
-}
-
-Vue.component('only-image',{
-    props: ['image'],
-    template:
-        '<img :src="imageSrc" alt="">',
-    computed:{
-        imageSrc: function() {
-            return 'data:image/png;base64,' + bytesToBase64(this.image);
-        }
-    }
-
-})
-
 Vue.component('image-data-row' ,{
     props: ['image','images'],
     computed: {
@@ -32,7 +11,7 @@ Vue.component('image-data-row' ,{
     },
     template:
     '<tr>'+
-        '<td><only-image :image="image" key="image.id"/></td>'+
+        '<td><img :src="imageSrc(image.image)" height="90" wight="200" alt=""></td>'+
         '<td>{{image.size}}</td>'+
         '<td>{{image.date}}</td>'+
         '<td><input type="button" value="delete" @click="del"/></td>'+
@@ -48,13 +27,8 @@ Vue.component('image-data-row' ,{
                 }
             })
         },
-        createImageUrl: function(imageBytes) {
-            let blob = new Blob([imageBytes], { type: 'image/png' });
-
-            return URL.createObjectURL(blob);
-        },
         imageSrc(imageBytes) {
-          return 'data:image/png;base64,' + btoa(new Uint8Array(imageBytes).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+          return 'data:image/png;base64,' + imageBytes;
         }
     }
 })

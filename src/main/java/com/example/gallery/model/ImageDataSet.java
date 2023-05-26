@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Entity
-@Table(name = "images")
+@Table(name = "gallery")
 public class ImageDataSet {
 
     @Id
@@ -23,8 +23,8 @@ public class ImageDataSet {
     @Column(name = "date_and_time",unique = false,nullable = false )
     private Date date;
 
-    @Column(name = "image", unique = false, nullable = false)
-    private byte[] image;
+    @Column(name = "base64image", unique = false, nullable = false)
+    private String image;
 
     public ImageDataSet() {
     }
@@ -33,7 +33,7 @@ public class ImageDataSet {
         this.id = id;
     }
 
-    public ImageDataSet(Integer size, Date date, byte[] image){
+    public ImageDataSet(Integer size, Date date, String image){
         this.size=size;
         this.date=date;
         this.image=image;
@@ -56,7 +56,7 @@ public class ImageDataSet {
         this.date = date;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -64,7 +64,7 @@ public class ImageDataSet {
         return date;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 }
