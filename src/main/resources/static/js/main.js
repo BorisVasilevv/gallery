@@ -1,52 +1,20 @@
 var imagesApi=Vue.resource('/image{/id}');
-//directory= 'src/main/resources/images';
-//'<img :id="image.id" :src=src/main/resources/images'+ '/' + '{{image.filename}}>'+
-//'<img src=src/main/resources/images/test1.png>'
-
-
-/*Vue.component('interactive-form',{
-
-    props: ['images'],
-    data: function() {
-        return {
-            filename: ''
-        }
-    },
-    template:
-    '<div>' +
-        '<input type="text" v-model="filename"/>'+
-        '<input type="button" value="Save" @click="save"/>'+
-        '<br><br>'+
-    '</div>',
-    methods:{
-        save: function(){
-            var image ={filename: this.filename};
-            imagesApi.save({},image).then(result=>
-                result.json().then(data=>{
-                    this.images.push(data);
-                     this.filename=''
-                })
-
-            )
-        }
-    }
-})*/
-
+var pathToImages="http://localhost:8080/picture/"
 
 Vue.component('image-view' ,{
     props: ['image','images'],
     computed: {
         miniatureFullPath: function(){
-            return "http://localhost:8080/picture/"+this.image.id
+            return pathToImages+this.image.id
         }
     },
     template:
-    '<div>'+
-        '{{image.id}})'+
-        '<img :src=miniatureFullPath width="200" height="87" @click="increase">'+
-        '{{image.size}}  {{image.date}}  '+
-        '<input type="button" value="delete" @click="del"/>'+
-    '</div>',
+    '<tr>'+
+        '<td><img :src=miniatureFullPath width="200" height="87" @click="increase"></td>'+
+        '<td>{{image.size}}</td>'+
+        '<td>{{image.date}}</td>'+
+        '<td><input type="button" value="delete" @click="del"/></td>'+
+    '</tr>',
     methods:{
         increase: function(){
 
@@ -60,14 +28,27 @@ Vue.component('image-view' ,{
         }
     }
 })
-//http://localhost:8080/image/smallCopy/
-
 
 Vue.component('image-list', {
     props: ['images'],
     template:
     '<div>'+
-        '<image-view v-for="image in images" :key="image.id" :image="image" :images="images"/>'+
+        '<add-form :im="images"/>'+
+        '<hr>'+
+        '<table class="table">'+
+            '<thead>'+
+                '<tr>'+
+                    '<td>Miniature</td>'+
+                    '<td>Size</td>'+
+                    '<td>Date</td>'+
+                    '<td>Action</td>'+
+                '</tr>'+
+            '</thead>'+
+
+            '<tbody>'+
+                '<image-view v-for="image in images" :key="image.id" :image="image" :images="images"/>'+
+            '</tbody>'+
+        '</table>'+
     '</div>',
     created: function(){
         imagesApi.get().then(result=>
@@ -76,6 +57,35 @@ Vue.component('image-list', {
         )
     }
 })
+
+
+Vue.component('add-form',{
+
+    props: ['images'],
+    data: function() {
+        return {
+            file: ''
+        }
+    },
+    template:
+    '<div>'+
+        '<input type="file" @change="uploadFile" ref="file"/>'+
+        '<input type="button" value="Add" @click="save"/>'+
+    '</div>',
+    methods:{
+        save: function(){
+            var image ={filename: this.filename};
+            imagesApi.save({},image).then(result=>
+                result.json().then(data=>{
+                    this.images.push(data);
+                     this.file=''
+                })
+
+            )
+        }
+    }
+})
+
 
 
 var app = new Vue({
