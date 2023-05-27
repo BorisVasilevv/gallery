@@ -143,37 +143,6 @@ function fileToBase64(file, callback) {
     reader.readAsDataURL(file);
 }
 
-/*function uploadImage() {
-    let file = document.querySelector("#file").files[0];
-    let data = new FormData();
-    data.append("file", file);
-    fetch("/image", {
-        method: "POST",
-        body: data
-    });
-    fetch("/image", {
-        method: "GET"
-    });
-    .then(response => {
-        if (response.ok) {
-            let message = document.querySelector("#message");
-            message.textContent = "File uploaded: " + file.name;
-            message.style.color = "green";
-            loadImages();
-        } else {
-            let message = document.querySelector("#message");
-            message.textContent = "Failed to upload file";
-            message.style.color = "red";
-        }
-    })
-    .catch(error => {
-        console.error(error);
-        let message = document.querySelector("#message");
-        message.textContent = "Failed to upload file";
-        message.style.color = "red";
-    });
-}*/
-
 
 var app = new Vue({
     el: '#app',

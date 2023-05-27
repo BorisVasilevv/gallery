@@ -1,10 +1,6 @@
 package com.example.gallery.model;
 
-
-
-
 import jakarta.persistence.*;
-
 import java.util.Date;
 
 @Entity
@@ -28,11 +24,8 @@ public class ImageDataSet {
     @Column(name="extension", nullable = false)
     private String extension;
 
-
-
     public ImageDataSet() {
     }
-
 
     public String getExtension() {
         return extension;
@@ -41,19 +34,13 @@ public class ImageDataSet {
     public void setExtension(String extensions) {
         this.extension = extensions;
     }
-
     public Integer getId() {
         return id;
     }
-
-    public long getSize() {
-        return size;
-    }
-
+    public long getSize() {return size;}
     public Date getDate() {
         return date;
     }
-
     public String getBase64image() {
         return base64image;
     }
