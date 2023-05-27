@@ -4,7 +4,6 @@ package com.example.gallery.model;
 
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
@@ -18,13 +17,18 @@ public class ImageDataSet {
     private Integer id;
 
     @Column(name = "size", unique = false,nullable = false)
-    private Integer size;
+    private long size;
 
     @Column(name = "date_and_time",unique = false,nullable = false )
     private Date date;
 
     @Column(name = "base64image", unique = false, nullable = false)
-    private String image;
+    private String base64image;
+
+    @Column(name="extension", nullable = false)
+    private String extension;
+
+
 
     public ImageDataSet() {
     }
@@ -33,22 +37,23 @@ public class ImageDataSet {
         this.id = id;
     }
 
-    public ImageDataSet(Integer size, Date date, String image){
-        this.size=size;
-        this.date=date;
-        this.image=image;
+    public String getExtension() {
+        return extension;
     }
 
+    public void setExtension(String extensions) {
+        this.extension = extensions;
+    }
 
     public Integer getId() {
         return id;
     }
 
-    public Integer getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(Integer size) {
+    public void setSize(long size) {
         this.size = size;
     }
 
@@ -56,16 +61,16 @@ public class ImageDataSet {
         this.date = date;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setBase64image(String base64image) {
+        this.base64image = base64image;
     }
 
     public Date getDate() {
         return date;
     }
 
-    public String getImage() {
-        return image;
+    public String getBase64image() {
+        return base64image;
     }
 }
 

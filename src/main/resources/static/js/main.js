@@ -1,17 +1,19 @@
 var imagesApi=Vue.resource('/image{/id}');
 var pathToImages="http://localhost:8080/picture/"
 
+const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+});
+
 
 Vue.component('image-data-row' ,{
     props: ['image','images'],
-    computed: {
-        miniatureFullPath: function(){
-            return pathToImages+this.image.id
-        }
-    },
     template:
     '<tr>'+
-        '<td><img :src="imageSrc(image.image)" height="90" wight="200" alt=""></td>'+
+        '<td><img :src="imageSrc(image.base64image, image.extension)" height="90" wight="200" alt=""></td>'+
         '<td>{{image.size}}</td>'+
         '<td>{{image.date}}</td>'+
         '<td><input type="button" value="delete" @click="del"/></td>'+
@@ -27,8 +29,8 @@ Vue.component('image-data-row' ,{
                 }
             })
         },
-        imageSrc(imageBytes) {
-          return 'data:image/png;base64,' + imageBytes;
+        imageSrc(imageBytes, type) {
+            return 'data:image/'+ type +';base64,' + imageBytes;
         }
     }
 })
@@ -38,7 +40,6 @@ Vue.component('image-list', {
     template:
     '<div>'+
         '<add-form :images="images"/>'+
-        '<hr>'+
         '<table class="table">'+
             '<thead>'+
                 '<tr>'+
@@ -62,35 +63,96 @@ Vue.component('image-list', {
     }
 })
 
+//'<add-form :images="images"/>'+
+//'<hr>'+
 
 Vue.component('add-form',{
-
     props: ['images'],
-    data: function() {
+    data: function(){
         return {
-            file: ''
+            size: null,
+            date: null,
+            base64image: null,
+            extension: null
         }
     },
     template:
-    '<div>'+
-        '<input type="file" @change="uploadFile" ref="file"/>'+
-        '<input type="button" value="Add" @click="save"/>'+
-    '</div>',
+        '<div>'+
+            '<input type="file" id="file" accept="image/*">'+
+            '<button @click="save">Add</button>'+
+        '</div>',
     methods:{
         save: function(){
-            var image ={filename: this.filename};
-            imagesApi.save({},image).then(result=>
-                result.json().then(data=>{
-                    this.images.push(data);
-                     this.file=''
-                })
+            let file = document.querySelector("#file").files[0];
+            let vm = this;
+            fileToBase64(file, function(base64String){
+                vm.base64image=base64String;
+                let fileSize = file.size;
+                const currentDate = new Date();
+                const extension = file.name.split('.').pop();
+                var image ={size: fileSize, date: currentDate, base64image: vm.base64image, extension: extension};
 
-            )
+                imagesApi.save({},image).then(data => {
+                     vm.images.push(data);
+                });
+            });
+
         },
-        uploadFile: function(){}
+        uploadImage: function(){
+            let file = document.querySelector("#file").files[0];
+            let data = new FormData();
+            const fileContent = fs.readFileSync(filePath); // читаем содержимое файла
+            const base64String = Buffer.from(fileContent).toString('base64');
+
+            data.append("file", file);
+            fetch("/image", {
+                method: "POST",
+                body: data
+            });
+
+        }
     }
 })
 
+function fileToBase64(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+    const base64String = event.target.result.replace("data:" + file.type + ";base64,", "");
+    callback(base64String);
+    };
+    reader.readAsDataURL(file);
+}
+
+/*function uploadImage() {
+    let file = document.querySelector("#file").files[0];
+    let data = new FormData();
+    data.append("file", file);
+    fetch("/image", {
+        method: "POST",
+        body: data
+    });
+    fetch("/image", {
+        method: "GET"
+    });
+    .then(response => {
+        if (response.ok) {
+            let message = document.querySelector("#message");
+            message.textContent = "File uploaded: " + file.name;
+            message.style.color = "green";
+            loadImages();
+        } else {
+            let message = document.querySelector("#message");
+            message.textContent = "Failed to upload file";
+            message.style.color = "red";
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        let message = document.querySelector("#message");
+        message.textContent = "Failed to upload file";
+        message.style.color = "red";
+    });
+}*/
 
 
 var app = new Vue({
