@@ -1,3 +1,9 @@
+#gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
 .table {
 	width: 100%;
 	margin-bottom: 20px;
@@ -14,3 +20,4 @@
 	border: 1px solid #dddddd;
 	padding: 5px;
 }
+

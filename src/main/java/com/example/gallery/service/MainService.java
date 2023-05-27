@@ -2,52 +2,50 @@ package com.example.gallery.service;
 
 import com.example.gallery.dao.ImageDAO;
 import com.example.gallery.model.ImageDataSet;
-import com.example.gallery.model.StringImageData;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 @Service
 public class MainService {
 
-    static HashMap<Integer, Image> imageCodeAndImage=new HashMap<>();
+    @Value("#{'${suitable.extensions}'.split(',')}")
+    private List<String> imageExtensions;
 
+    private List<ImageDataSet> allImages;
 
-
-    public ArrayList<StringImageData> getAllImages(){
-        ArrayList<StringImageData> list=new ArrayList<>();
-        ImageDAO imageDAO=new ImageDAO();
-        List<ImageDataSet> allImages=imageDAO.getAll();
-        if(allImages==null) return list;
-        for(ImageDataSet set:allImages){
-            list.add(new StringImageData(set.getId(),set.getSize(),set.getDate()));
+    public List<ImageDataSet> getAllImages(){
+        if(allImages==null){
+            ImageDAO imageDAO=new ImageDAO();
+            allImages=imageDAO.getAll();
         }
-        return list;
+        return allImages;
     }
 
-
-
-    public BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
-            return (BufferedImage) img;
+    public void remove(Integer id){
+        ImageDataSet set=null;
+        for (ImageDataSet someSet:allImages){
+            if(someSet.getId().equals(id)){
+                set=someSet;
+                break;
+            }
         }
+        if(set!=null){
+            allImages.remove(set);
+        }
+    }
 
-        BufferedImage bufImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    public boolean isExtensionSuitable(MultipartFile file){
 
-        // Draw the image on to the buffered image
-        Graphics2D bGr = bufImage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
+        String[] arrayName=file.getOriginalFilename().split("\\.");
+        if(arrayName.length<2) return false;
+        else return imageExtensions.contains(arrayName[arrayName.length-1]);
+    }
 
-        // Return the buffered image
-        return bufImage;
+    public boolean isExtensionSuitable(String extension){
+        return imageExtensions.contains(extension);
     }
 
 }
