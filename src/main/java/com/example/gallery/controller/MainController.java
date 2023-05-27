@@ -1,17 +1,12 @@
 package com.example.gallery.controller;
 
 import com.example.gallery.dao.ImageDAO;
+import com.example.gallery.exceptions.BadRequestException;
 import com.example.gallery.model.ImageDataSet;
 import com.example.gallery.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -36,46 +31,29 @@ public class MainController {
 
     @PostMapping
     public ImageDataSet create(@RequestBody ImageDataSet set){
-        ImageDAO dao=new ImageDAO();
-        dao.save(set);
-        service.getAllImages().add(set);
-        return set;
-    }
-
-
-   /* @PostMapping
-    public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("No file uploaded");
-        } else if (!service.isFileImage(file)) {
-            return ResponseEntity.badRequest().body("File not image");
-        }
-        try {
-            ImageDataSet set = new ImageDataSet(file.getSize(), new Date(), Base64.getEncoder().encodeToString(file.getBytes()));
-            ImageDAO dao = new ImageDAO();
+        if(service.isExtensionSuitable(set.getExtension())){
+            ImageDAO dao=new ImageDAO();
             dao.save(set);
-            return ResponseEntity.ok("File uploaded: " + file.getOriginalFilename());
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Failed to upload file: " + e.getMessage());
+            service.getAllImages().add(set);
+            return set;
         }
-    }*/
+        throw new BadRequestException();
+    }
+    
 
     @PutMapping("{id}")
     public ImageDataSet update(@PathVariable String id, @RequestBody ImageDataSet image){
-        //StringImageData imDS=findImageById(id);
-        //imDS.setDate(image.getDate());
-        //imDS.setSize(image.getSize());
-        //imDS.setFilename(image.getFilename());
+
         return image;
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id){
 
-        //StringImageData imDS=findImageById(id);
-        //service.getAllImages().remove(imDS);
+        service.remove(Integer.parseInt(id));
         ImageDAO dao=new ImageDAO();
         dao.delete(Integer.parseInt(id));
+
     }
 
 

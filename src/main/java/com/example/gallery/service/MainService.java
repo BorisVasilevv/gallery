@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 @Service
@@ -28,30 +26,28 @@ public class MainService {
     }
 
 
-
-    public BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
-            return (BufferedImage) img;
+    public void remove(Integer id){
+        ImageDataSet set=null;
+        for (ImageDataSet someSet:allImages){
+            if(someSet.getId().equals(id)){
+                set=someSet;
+                break;
+            }
         }
-
-        BufferedImage bufImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-        // Draw the image on to the buffered image
-        Graphics2D bGr = bufImage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
-
-        // Return the buffered image
-        return bufImage;
+        if(set!=null){
+            allImages.remove(set);
+        }
     }
 
-    public boolean isFileImage(MultipartFile file){
+    public boolean isExtensionSuitable(MultipartFile file){
 
         String[] arrayName=file.getOriginalFilename().split("\\.");
         if(arrayName.length<2) return false;
         else return imageExtensions.contains(arrayName[arrayName.length-1]);
+    }
+
+    public boolean isExtensionSuitable(String extension){
+        return imageExtensions.contains(extension);
     }
 
 }

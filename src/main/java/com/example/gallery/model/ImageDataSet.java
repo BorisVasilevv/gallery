@@ -33,9 +33,6 @@ public class ImageDataSet {
     public ImageDataSet() {
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getExtension() {
         return extension;
@@ -51,18 +48,6 @@ public class ImageDataSet {
 
     public long getSize() {
         return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public void setBase64image(String base64image) {
-        this.base64image = base64image;
     }
 
     public Date getDate() {
