@@ -6,41 +6,41 @@ Vue.component('image-data-row' ,{
         '<tr>'+
             '<td><img :src="imageSrc(image.base64image, image.extension)" height="90" wight="200" alt="" @click="openImage(imageSrc(image.base64image, image.extension))"></td>'+
             '<td>{{image.size}}</td>'+
-            '<td>{{image.date}}</td>'+
+            '<td>{{getTime(image.date)}}<br>{{getDate(image.date)}}</td>'+
             '<td><input type="button" value="delete" @click="del"/></td>'+
         '</tr>',
     methods:{
-            openImage: function(url) {
-                // Создаем элементы для модального окна и изображения
-                const overlay = document.createElement('div');
-                const image = document.createElement('img');
+        openImage: function(url) {
+            // Создаем элементы для модального окна и изображения
+            const overlay = document.createElement('div');
+            const image = document.createElement('img');
 
-                // Настраиваем стили элементов модального окна
-                overlay.style.position = 'fixed';
-                overlay.style.top = '0';
-                overlay.style.left = '0';
-                overlay.style.width = '100%';
-                overlay.style.height = '100%';
-                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-                overlay.style.zIndex = '1';
-                overlay.style.display = 'flex';
-                overlay.style.alignItems = 'center';
-                overlay.style.justifyContent = 'center';
+            // Настраиваем стили элементов модального окна
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            overlay.style.zIndex = '1';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
 
-                // Настраиваем атрибуты изображения
-                image.src = url;
-                image.style.maxWidth = '90%';
-                image.style.maxHeight = '90%';
+            // Настраиваем атрибуты изображения
+            image.src = url;
+            image.style.maxWidth = '90%';
+            image.style.maxHeight = '90%';
 
-                // Добавляем изображение в модальное окно
-                overlay.appendChild(image);
+            // Добавляем изображение в модальное окно
+            overlay.appendChild(image);
 
-                // Добавляем модальное окно в документ
-                document.body.appendChild(overlay);
+            // Добавляем модальное окно в документ
+            document.body.appendChild(overlay);
 
-                // Закрываем модальное окно при клике на любом месте наложения
-                overlay.addEventListener('click', () => {
-                overlay.remove();
+            // Закрываем модальное окно при клике на любом месте наложения
+            overlay.addEventListener('click', () => {
+            overlay.remove();
             });
         },
         del: function(){
@@ -52,6 +52,13 @@ Vue.component('image-data-row' ,{
         },
         imageSrc(imageBytes, type) {
             return 'data:image/'+ type +';base64,' + imageBytes;
+        },
+        getDate(date){
+            let arr=date.split('T')[0].split('-');
+            return arr[2]+'.'+arr[1]+'.'+arr[0];
+        },
+        getTime(date){
+            return date.split('+').join('T').split('.').join('T').split('T')[1];
         }
     }
 })
@@ -80,13 +87,9 @@ Vue.component('image-list', {
 
         '</div>',
     created: function(){
-        imagesApi.get().then(result=>{
-        result.json().then(data=>{
-        data.forEach(image=>this.images.push(image))
-        console.log(this.images);
-        })
-        }
-        )
+        imagesApi.get().then(result=>
+        result.json().then(data=>
+        data.forEach(image=>this.images.push(image))))
     }
 })
 

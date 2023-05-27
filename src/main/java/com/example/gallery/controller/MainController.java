@@ -39,7 +39,7 @@ public class MainController {
         }
         throw new BadRequestException();
     }
-    
+
 
     @PutMapping("{id}")
     public ImageDataSet update(@PathVariable String id, @RequestBody ImageDataSet image){
@@ -56,17 +56,4 @@ public class MainController {
 
     }
 
-
-
-
-    /*private StringImageData findImageById(Integer id){
-        return service.getAllImages().stream()
-                .filter(image->image.getId().equals(id))
-                .findFirst()
-                .orElseThrow(NotFoundException::new);
-    }*/
-
-    /*private StringImageData findImageById(String id){
-        return findImageById(Integer.parseInt(id));
-    }*/
 }
