@@ -15,22 +15,17 @@
         padding: 5px;
         border-collapse: collapse;
     }
-    column {
-        display: inline-block;
-        width: 33%;
-        box-sizing: border-box;
-        padding: 0 10px;
-        vertical-align: top;
+    grid {
+        display: grid;
+
+        grid-template-columns: repeat(3,1fr);
+        grid-gap: 10px;
     }
 </style>
 </head>
 <body>
 <h3>Gallery</h3>
 <hr>
-<!--<div>
-    <input type="file" id="file" accept="image/*">
-    <button onclick="uploadImage()">Add</button>
-</div>-->
 <div id="app"> </div>
 <script src="/js/main.js"></script>
 

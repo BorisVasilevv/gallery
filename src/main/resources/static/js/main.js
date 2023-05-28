@@ -3,12 +3,12 @@ var imagesApi=Vue.resource('/image{/id}');
 Vue.component('image-data-row' ,{
     props: ['image','images'],
     template:
-        '<tr>'+
-            '<td><img :src="imageSrc(image.base64image, image.extension)" height="90" wight="200" alt="" @click="openImage(imageSrc(image.base64image, image.extension))"></td>'+
-            '<td>{{image.size}}</td>'+
-            '<td>{{getTime(image.date)}}<br>{{getDate(image.date)}}</td>'+
-            '<td><input type="button" value="delete" @click="del"/></td>'+
-        '</tr>',
+        '<div>'+
+            '<img :src="imageSrc(image.base64image, image.extension)" height="90" wight="200" alt="" @click="openImage(imageSrc(image.base64image, image.extension))">'+
+            '<br>{{image.size}}<br>'+
+            '{{getTime(image.date)}}<br>{{getDate(image.date)}}<br>'+
+            '<input type="button" value="delete" @click="del"/>'+
+        '</div>',
     methods:{
         openImage: function(url) {
             // Создаем элементы для модального окна и изображения
@@ -63,6 +63,8 @@ Vue.component('image-data-row' ,{
     }
 })
 
+
+
 Vue.component('image-list', {
     props: ['images'],
     template:
@@ -82,20 +84,9 @@ Vue.component('image-list', {
             '</form>'+
 
             '<hr>'+
-            '<table class="table">'+
-                '<thead>'+
-                    '<tr>'+
-                        '<td>Miniature</td>'+
-                        '<td>Size</td>'+
-                        '<td>Date</td>'+
-                        '<td>Action</td>'+
-                    '</tr>'+
-                '</thead>'+
-
-                '<tbody>'+
-                    '<image-data-row v-for="image in images" :key="image.id" :image="image" :images="images"/>'+
-                '</tbody>'+
-            '</table>'+
+            '<div class="grid">'+
+                '<image-data-row v-for="image in images" :key="image.id" :image="image" :images="images"/>'+
+            '</div>'+
 
 
         '</div>',
