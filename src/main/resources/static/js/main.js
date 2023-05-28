@@ -1,5 +1,91 @@
 var imagesApi=Vue.resource('/image{/id}');
 
+Vue.component('image-list', {
+    data() {
+        return {
+            selectedSortValue: 'By date',
+            selectedSortDirection: 'Descending'
+        }
+    },
+    props: ['images'],
+    template:
+        '<div>'+
+            '<add-form :images="images"/>'+
+            '<br>'+
+            '<form>'+
+                'Filter:  '+
+                '<select v-model="selectedSortValue">'+
+                    '<option>By date</option>'+
+                    '<option>By size</option>'+
+                '</select>  '+
+                '<select v-model="selectedSortDirection">'+
+                    '<option>Ascending</option>'+
+                    '<option>Descending</option>'+
+                '</select>  '+
+            '</form>'+
+            '<hr>'+
+            '<div class="grid">'+
+                '<image-data-row v-for="image in selectedItems" :key="image.id" :image="image" :images="images"/>'+
+            '</div>'+
+        '</div>',
+    created: function(){
+        imagesApi.get().then(result=>
+        result.json().then(data=>
+        data.forEach(image=>this.images.push(image))))
+    },
+    computed: {
+        selectedItems(){
+            if(this.selectedSortValue=="By size"){
+                if(this.selectedSortDirection=="Ascending") return quickSortBySize(this.images);
+                else if (this.selectedSortDirection=="Descending") return quickSortBySize(this.images).reverse();
+            }
+            else if (this.selectedSortValue=="By date"){
+                if(this.selectedSortDirection=="Ascending") return quickSortByDate(this.images);
+                else if (this.selectedSortDirection=="Descending") return quickSortByDate(this.images).reverse();
+            }
+
+        }
+    }
+})
+
+Vue.component('add-form',{
+    props: ['images'],
+    data: function(){
+        return {
+            size: null,
+            date: null,
+            base64image: null,
+            extension: null
+        }
+    },
+    template:
+        '<div>'+
+            '<input type="file" id="inputFile" accept="image/*">'+
+            '<button @click="save">Add</button>'+
+        '</div>',
+    methods:{
+        save: function(){
+            let file = document.querySelector("#inputFile").files[0];
+            let vm = this;
+            fileToBase64(file, function(base64String){
+                vm.base64image=base64String;
+                let fileSize = file.size;
+                const currentDate = new Date();
+                const extension = file.name.split('.').pop();
+                let image ={size: fileSize, date: currentDate, base64image: vm.base64image, extension: extension};
+
+                imagesApi.save({},image).then(result=>
+                    result.json().then(data=>{
+                        vm.images.push(data);
+                }));
+            });
+            document.querySelector('#inputFile').value = null;
+
+        }
+    }
+})
+
+
 Vue.component('image-data-row' ,{
     props: ['image','images'],
     template:
@@ -7,7 +93,7 @@ Vue.component('image-data-row' ,{
             '<div class="aspect-ratio-box">'+
                 '<img :src="imageSrc(image.base64image, image.extension)" alt="" @click="openImage(imageSrc(image.base64image, image.extension))">'+
             '</div>'+
-            '<br>{{getTime(image.date)}}<br>{{getDate(image.date)}}<br>'+
+            '{{image.size}}<br>{{getTime(image.date)}}<br>{{getDate(image.date)}}<br>'+
             '<input type="button" value="delete" @click="del"/>'+
         '</div>',
     methods:{
@@ -22,7 +108,7 @@ Vue.component('image-data-row' ,{
             overlay.style.left = '0';
             overlay.style.width = '100%';
             overlay.style.height = '100%';
-            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            overlay.style.backgroundColor = 'rgba(19, 19, 19, .75)';
             overlay.style.zIndex = '1';
             overlay.style.display = 'flex';
             overlay.style.alignItems = 'center';
@@ -65,83 +151,6 @@ Vue.component('image-data-row' ,{
 })
 
 
-
-Vue.component('image-list', {
-    props: ['images'],
-    template:
-        '<div>'+
-            '<add-form :images="images"/>'+
-            '<br>'+
-            '<form>'+
-                '<select>'+
-                    '<option>By date</option>'+
-                    '<option>By size</option>'+
-                '</select>  '+
-                '<select>'+
-                    '<option>Ascending</option>'+
-                    '<option>Descending</option>'+
-                '</select>  '+
-                '<button @click="filtration">Filter</button>'+
-            '</form>'+
-
-            '<hr>'+
-            '<div class="grid">'+
-                '<image-data-row v-for="image in images" :key="image.id" :image="image" :images="images"/>'+
-            '</div>'+
-
-
-        '</div>',
-    created: function(){
-        imagesApi.get().then(result=>
-        result.json().then(data=>
-        data.forEach(image=>this.images.push(image))))
-    },
-    methods:{
-        filtration: function(){}
-    }
-})
-
-//'<add-form :images="images"/>'+
-//'<hr>'+
-
-Vue.component('add-form',{
-    props: ['images'],
-    data: function(){
-        return {
-            size: null,
-            date: null,
-            base64image: null,
-            extension: null
-        }
-    },
-    template:
-        '<div>'+
-            '<input type="file" id="file" accept="image/*">'+
-            '<button @click="save">Add</button>'+
-        '</div>',
-    methods:{
-        save: function(){
-            let file = document.querySelector("#file").files[0];
-            let vm = this;
-            fileToBase64(file, function(base64String){
-                vm.base64image=base64String;
-                let fileSize = file.size;
-                const currentDate = new Date();
-                const extension = file.name.split('.').pop();
-                var image ={size: fileSize, date: currentDate, base64image: vm.base64image, extension: extension};
-
-
-                imagesApi.save({},image).then(result=>
-                    result.json().then(data=>{
-                        vm.images.push(data);
-                }));
-            });
-
-
-        }
-    }
-})
-
 function fileToBase64(file, callback) {
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -149,6 +158,43 @@ function fileToBase64(file, callback) {
     callback(base64String);
     };
     reader.readAsDataURL(file);
+}
+
+function quickSortBySize(arr){
+    if(arr.length<=1){
+        return arr;
+    }
+    let pivot=arr[0];
+    let left=[];
+    let right=[];
+    for(let i=1;i<arr.length;i++){
+        if(arr[i].size<pivot.size){
+            left.push(arr[i]);
+        }
+        else {
+            right.push(arr[i]);
+        }
+    }
+    return quickSortBySize(left).concat(pivot, quickSortBySize(right));
+}
+
+
+function quickSortByDate(arr){
+    if(arr.length<=1){
+        return arr;
+    }
+    let pivot=arr[0];
+    let left=[];
+    let right=[];
+    for(let i=1;i<arr.length;i++){
+        if(arr[i].date<pivot.date){
+            left.push(arr[i]);
+        }
+        else {
+            right.push(arr[i]);
+        }
+    }
+    return quickSortByDate(left).concat(pivot, quickSortByDate(right));
 }
 
 
