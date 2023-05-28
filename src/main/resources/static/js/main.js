@@ -68,6 +68,19 @@ Vue.component('image-list', {
     template:
         '<div>'+
             '<add-form :images="images"/>'+
+            '<br>'+
+            '<form>'+
+                '<select>'+
+                    '<option>By date</option>'+
+                    '<option>By size</option>'+
+                '</select>'+
+                '<select>'+
+                    '<option>Ascending</option>'+
+                    '<option>Descending</option>'+
+                '</select>'+
+                '<button @click="filtration">Filter</button>'+
+            '</form>'+
+
             '<hr>'+
             '<table class="table">'+
                 '<thead>'+
@@ -90,6 +103,9 @@ Vue.component('image-list', {
         imagesApi.get().then(result=>
         result.json().then(data=>
         data.forEach(image=>this.images.push(image))))
+    },
+    methods:{
+        filtration: function(){}
     }
 })
 
