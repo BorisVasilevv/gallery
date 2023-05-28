@@ -4,9 +4,10 @@ Vue.component('image-data-row' ,{
     props: ['image','images'],
     template:
         '<div>'+
-            '<img :src="imageSrc(image.base64image, image.extension)" height="90" wight="200" alt="" @click="openImage(imageSrc(image.base64image, image.extension))">'+
-            '<br>{{image.size}}<br>'+
-            '{{getTime(image.date)}}<br>{{getDate(image.date)}}<br>'+
+            '<div class="aspect-ratio-box">'+
+                '<img :src="imageSrc(image.base64image, image.extension)" alt="" @click="openImage(imageSrc(image.base64image, image.extension))">'+
+            '</div>'+
+            '<br>{{getTime(image.date)}}<br>{{getDate(image.date)}}<br>'+
             '<input type="button" value="delete" @click="del"/>'+
         '</div>',
     methods:{
@@ -75,11 +76,11 @@ Vue.component('image-list', {
                 '<select>'+
                     '<option>By date</option>'+
                     '<option>By size</option>'+
-                '</select>'+
+                '</select>  '+
                 '<select>'+
                     '<option>Ascending</option>'+
                     '<option>Descending</option>'+
-                '</select>'+
+                '</select>  '+
                 '<button @click="filtration">Filter</button>'+
             '</form>'+
 
